@@ -1,0 +1,33 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper function to check if user is admin
+    function isAdmin() {
+      return request.auth != null && 
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    // Users: Users can read/write their own data; Admins can access everything
+    match /users/{userId} {
+      allow read, write: if request.auth != null && (request.auth.uid == userId || isAdmin());
+      
+      // Addresses subcollection
+      match /addresses/{addressId} {
+         allow read, write: if request.auth != null && (request.auth.uid == userId || isAdmin());
+      }
+    }
+
+    // Products: Public read, Admin write
+    match /products/{productId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Orders: Users read own, Admins read/update all
+    match /orders/{orderId} {
+      allow read: if request.auth != null && (resource.data.userId == request.auth.uid || isAdmin());
+      allow create: if request.auth != null;
+      allow update: if isAdmin();
+    }
+  }
+}
