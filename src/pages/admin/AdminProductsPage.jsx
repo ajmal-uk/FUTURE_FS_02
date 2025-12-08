@@ -138,7 +138,7 @@ const AdminProductsPage = () => {
                             </select>
                         </div>
                         <div className="form-group">
-                            <label>Price ($)</label>
+                            <label>Price (₹)</label>
                             <input
                                 type="number"
                                 step="0.01"
@@ -234,7 +234,7 @@ const AdminProductsPage = () => {
                                     <td>
                                         <span className="badge badge-primary">{product.category}</span>
                                     </td>
-                                    <td><strong>${product.price?.toFixed(2)}</strong></td>
+                                    <td><strong>₹{product.price?.toFixed(0)}</strong></td>
                                     <td>
                                         {product.stock > 0 ? (
                                             <span className={product.stock <= 5 ? 'text-warning' : ''}>

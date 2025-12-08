@@ -57,96 +57,79 @@ const CompleteProfilePage = () => {
                 <form onSubmit={handleSubmit} className="auth-form">
                     <div className="form-group">
                         <label>Phone Number</label>
-                        <div className="input-wrapper">
-                            <span className="input-icon">📱</span>
-                            <input
-                                name="phone"
-                                value={formData.phone}
-                                onChange={handleChange}
-                                placeholder="+1 234 567 890"
-                                required
-                            />
-                        </div>
+                        <input
+                            name="phone"
+                            value={formData.phone}
+                            onChange={handleChange}
+                            placeholder="+91 98765 43210"
+                            required
+                        />
                     </div>
 
                     <div className="form-group">
                         <label>Address Line 1</label>
-                        <div className="input-wrapper">
-                            <span className="input-icon">📍</span>
-                            <input
-                                name="addressLine1"
-                                value={formData.addressLine1}
-                                onChange={handleChange}
-                                placeholder="Street Address"
-                                required
-                            />
-                        </div>
+                        <input
+                            name="addressLine1"
+                            value={formData.addressLine1}
+                            onChange={handleChange}
+                            placeholder="Street Address"
+                            required
+                        />
                     </div>
 
                     <div className="form-group">
                         <label>Address Line 2 (Optional)</label>
-                        <div className="input-wrapper">
-                            <span className="input-icon">🏢</span>
-                            <input
-                                name="addressLine2"
-                                value={formData.addressLine2}
-                                onChange={handleChange}
-                                placeholder="Apt, Suite, Unit"
-                            />
-                        </div>
+                        <input
+                            name="addressLine2"
+                            value={formData.addressLine2}
+                            onChange={handleChange}
+                            placeholder="Apt, Suite, Unit"
+                        />
                     </div>
 
                     <div className="form-row">
                         <div className="form-group">
                             <label>City</label>
-                            <div className="input-wrapper">
-                                <span className="input-icon">🏙️</span>
-                                <input
-                                    name="city"
-                                    value={formData.city}
-                                    onChange={handleChange}
-                                    required
-                                />
-                            </div>
+                            <input
+                                name="city"
+                                value={formData.city}
+                                onChange={handleChange}
+                                placeholder="Enter city"
+                                required
+                            />
                         </div>
                         <div className="form-group">
                             <label>State/Province</label>
-                            <div className="input-wrapper">
-                                <span className="input-icon">🗺️</span>
-                                <input
-                                    name="state"
-                                    value={formData.state}
-                                    onChange={handleChange}
-                                    required
-                                />
-                            </div>
+                            <input
+                                name="state"
+                                value={formData.state}
+                                onChange={handleChange}
+                                placeholder="Enter state"
+                                required
+                            />
                         </div>
                     </div>
 
                     <div className="form-row">
                         <div className="form-group">
                             <label>Postal Code</label>
-                            <div className="input-wrapper">
-                                <span className="input-icon">📮</span>
-                                <input
-                                    name="postalCode"
-                                    value={formData.postalCode}
-                                    onChange={handleChange}
-                                    required
-                                />
-                            </div>
+                            <input
+                                name="postalCode"
+                                value={formData.postalCode}
+                                onChange={handleChange}
+                                placeholder="Enter PIN code"
+                                required
+                            />
                         </div>
                         <div className="form-group">
                             <label>Country</label>
-                            <div className="input-wrapper">
-                                <span className="input-icon">🌍</span>
-                                <input
-                                    name="country"
-                                    value={formData.country}
-                                    onChange={handleChange}
-                                    required
-                                />
-                            </div>
+                            <input
+                                name="country"
+                                value={formData.country}
+                                onChange={handleChange}
+                                placeholder="India"
+                                required
+                            />
                         </div>
                     </div>
 

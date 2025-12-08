@@ -57,7 +57,7 @@ const ProductCard = ({ product, style }) => {
                         {product.description?.length > 50 ? '...' : ''}
                     </p>
                     <div className="card-footer">
-                        <span className="price">${product.price?.toFixed(2)}</span>
+                        <span className="price">₹{product.price?.toFixed(0)}</span>
                         <div className="card-actions">
                             <button
                                 onClick={handleAddToCart}

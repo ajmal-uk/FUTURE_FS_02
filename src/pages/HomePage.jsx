@@ -54,7 +54,7 @@ const HomePage = () => {
                 <div className="hero-content">
                     <span className="hero-badge">✨ New Collection Available</span>
                     <h1>Discover Premium Products</h1>
-                    <p>Shop the latest trends with exclusive deals and free shipping on orders over $50</p>
+                    <p>Shop the latest trends with exclusive deals and free shipping on orders over ₹500</p>
 
                     <form onSubmit={handleSearch} className="hero-search">
                         <div className="search-wrapper">
@@ -159,7 +159,7 @@ const HomePage = () => {
                                     </Link>
                                     <p className="product-desc">{product.description?.substring(0, 60)}...</p>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                        <span className="featured-price">${product.price}</span>
+                                        <span className="featured-price">₹{product.price}</span>
                                         <div className="product-actions">
                                             <button
                                                 onClick={() => handleAddToCart(product)}

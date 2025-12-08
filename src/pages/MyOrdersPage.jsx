@@ -83,7 +83,7 @@ const MyOrdersPage = () => {
                                             <span className="item-qty">Qty: {item.quantity}</span>
                                         </div>
                                         <span className="item-price">
-                                            ${(item.price * item.quantity).toFixed(2)}
+                                            ₹{(item.price * item.quantity).toFixed(0)}
                                         </span>
                                     </div>
                                 ))}
@@ -92,7 +92,7 @@ const MyOrdersPage = () => {
                             <div className="summary-totals" style={{ marginTop: '1rem' }}>
                                 <div className="summary-row total">
                                     <span>Total Amount</span>
-                                    <span>${order.totalAmount?.toFixed(2)}</span>
+                                    <span>₹{order.totalAmount?.toFixed(0)}</span>
                                 </div>
                             </div>
                         </div>

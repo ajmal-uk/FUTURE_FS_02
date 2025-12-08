@@ -83,7 +83,7 @@ const ProductDetailPage = () => {
                         )}
                     </div>
 
-                    <p className="detail-price">${product.price?.toFixed(2)}</p>
+                    <p className="detail-price">₹{product.price?.toFixed(0)}</p>
                     <p className="description">{product.description}</p>
 
                     {product.stock > 0 && (

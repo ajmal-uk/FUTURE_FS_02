@@ -46,7 +46,7 @@ const CartPage = () => {
                                     )}
                                 </div>
                                 <div className="item-price">
-                                    ${item.price?.toFixed(2)}
+                                    ₹{item.price?.toFixed(0)}
                                 </div>
                             </div>
                             <div className="item-actions">
@@ -65,7 +65,7 @@ const CartPage = () => {
                                     </button>
                                 </div>
                                 <div className="item-subtotal">
-                                    ${(item.price * item.quantity).toFixed(2)}
+                                    ₹{(item.price * item.quantity).toFixed(0)}
                                 </div>
                                 <button
                                     onClick={() => removeFromCart(item.id)}
@@ -85,21 +85,21 @@ const CartPage = () => {
                     <div className="summary-rows">
                         <div className="summary-row">
                             <span>Subtotal</span>
-                            <span>${cartTotal.toFixed(2)}</span>
+                            <span>₹{cartTotal.toFixed(0)}</span>
                         </div>
                         <div className="summary-row">
                             <span>Shipping</span>
                             <span className="free-shipping">FREE</span>
                         </div>
                         <div className="summary-row">
-                            <span>Tax</span>
-                            <span>${(cartTotal * 0.1).toFixed(2)}</span>
+                            <span>Tax (GST 18%)</span>
+                            <span>₹{(cartTotal * 0.18).toFixed(0)}</span>
                         </div>
                     </div>
 
                     <div className="summary-total">
                         <span>Total</span>
-                        <span>${(cartTotal * 1.1).toFixed(2)}</span>
+                        <span>₹{(cartTotal * 1.18).toFixed(0)}</span>
                     </div>
 
                     <button

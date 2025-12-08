@@ -152,7 +152,7 @@ const AdminOverview = () => {
                 <div className="stat-card">
                     <div className="stat-icon revenue">💰</div>
                     <div className="stat-info">
-                        <span className="stat-value">${stats.revenue.toFixed(2)}</span>
+                        <span className="stat-value">₹{stats.revenue.toFixed(0)}</span>
                         <span className="stat-label">Revenue</span>
                     </div>
                 </div>
@@ -177,7 +177,7 @@ const AdminOverview = () => {
                                             {order.status}
                                         </span>
                                         <span className="order-amount">
-                                            ${order.totalAmount?.toFixed(2)}
+                                            ₹{order.totalAmount?.toFixed(0)}
                                         </span>
                                     </div>
                                 </div>

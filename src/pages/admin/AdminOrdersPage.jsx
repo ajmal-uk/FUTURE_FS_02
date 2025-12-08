@@ -126,7 +126,7 @@ const AdminOrdersPage = () => {
                                     <p><strong>Items:</strong> {order.items?.length || 0}</p>
                                     <p><strong>Payment:</strong> {order.paymentStatus || 'Pending'}</p>
                                     <p className="order-total">
-                                        <strong>Total: ${order.totalAmount?.toFixed(2)}</strong>
+                                        <strong>Total: ₹{order.totalAmount?.toFixed(0)}</strong>
                                     </p>
                                 </div>
                             </div>
@@ -137,7 +137,7 @@ const AdminOrdersPage = () => {
                                         <div key={idx} className="item-row">
                                             <span>{item.name}</span>
                                             <span>x{item.quantity}</span>
-                                            <span>${item.subtotal?.toFixed(2)}</span>
+                                            <span>₹{item.subtotal?.toFixed(0)}</span>
                                         </div>
                                     ))}
                                 </div>

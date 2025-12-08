@@ -88,7 +88,7 @@ const CheckoutPage = () => {
     const checkoutTotal = buyNowProduct
         ? buyNowProduct.price
         : cartTotal;
-    const tax = checkoutTotal * 0.1;
+    const tax = checkoutTotal * 0.18; // GST 18%
     const finalTotal = checkoutTotal + tax;
 
     const handlePayment = async () => {
@@ -385,7 +385,7 @@ const CheckoutPage = () => {
                                         onClick={handlePayment}
                                         disabled={loading}
                                     >
-                                        {loading ? 'Processing...' : `Pay ₹${(finalTotal * 83).toFixed(0)}`}
+                                        {loading ? 'Processing...' : `Pay ₹${finalTotal.toFixed(0)}`}
                                     </button>
                                 </div>
                             </div>
@@ -409,7 +409,7 @@ const CheckoutPage = () => {
                                             <span className="item-qty">Qty: {item.quantity || 1}</span>
                                         </div>
                                         <span className="item-price">
-                                            ${(item.price * (item.quantity || 1)).toFixed(2)}
+                                            ₹{(item.price * (item.quantity || 1)).toFixed(0)}
                                         </span>
                                     </div>
                                 ))}
@@ -418,19 +418,19 @@ const CheckoutPage = () => {
                             <div className="summary-totals">
                                 <div className="summary-row">
                                     <span>Subtotal</span>
-                                    <span>${checkoutTotal.toFixed(2)}</span>
+                                    <span>₹{checkoutTotal.toFixed(0)}</span>
                                 </div>
                                 <div className="summary-row">
                                     <span>Shipping</span>
                                     <span className="free">FREE</span>
                                 </div>
                                 <div className="summary-row">
-                                    <span>Tax (10%)</span>
-                                    <span>${tax.toFixed(2)}</span>
+                                    <span>Tax (GST 18%)</span>
+                                    <span>₹{tax.toFixed(0)}</span>
                                 </div>
                                 <div className="summary-row total">
                                     <span>Total</span>
-                                    <span>${finalTotal.toFixed(2)}</span>
+                                    <span>₹{finalTotal.toFixed(0)}</span>
                                 </div>
                             </div>
                         </div>
