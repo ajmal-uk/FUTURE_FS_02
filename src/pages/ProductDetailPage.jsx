@@ -30,12 +30,27 @@ const ProductDetailPage = () => {
         fetchProduct();
     }, [id, navigate]);
 
+    // Check if product has an active offer
+    const hasActiveOffer = () => {
+        if (!product?.offer) return false;
+        const now = new Date();
+        const startDate = new Date(product.offer.startDate);
+        const endDate = new Date(product.offer.endDate);
+        return now >= startDate && now <= endDate;
+    };
+
+    const activeOffer = product ? hasActiveOffer() : false;
+    const discountPercent = activeOffer ? product.offer.discountPercent : 0;
+    const discountedPrice = activeOffer
+        ? product.price * (1 - discountPercent / 100)
+        : product?.price;
+
     const handleAddToCart = () => {
         if (!currentUser) {
             navigate('/login');
             return;
         }
-        addToCart(product, quantity);
+        addToCart({ ...product, price: discountedPrice }, quantity);
     };
 
     const handleBuyNow = () => {
@@ -71,6 +86,9 @@ const ProductDetailPage = () => {
                         src={product.imageUrl || 'https://placehold.co/500x500?text=Product'}
                         alt={product.name}
                     />
+                    {activeOffer && (
+                        <span className="detail-offer-badge">{discountPercent}% OFF</span>
+                    )}
                 </div>
                 <div className="detail-info">
                     <h1>{product.name}</h1>
@@ -83,7 +101,23 @@ const ProductDetailPage = () => {
                         )}
                     </div>
 
-                    <p className="detail-price">₹{product.price?.toFixed(0)}</p>
+                    {activeOffer && product.offer.offerTitle && (
+                        <div className="offer-info-box">
+                            <span className="offer-icon">🎉</span>
+                            <span className="offer-text">{product.offer.offerTitle}</span>
+                        </div>
+                    )}
+
+                    {activeOffer ? (
+                        <div className="detail-price-container">
+                            <span className="detail-price discounted">₹{discountedPrice?.toFixed(0)}</span>
+                            <span className="detail-original-price">₹{product.price?.toFixed(0)}</span>
+                            <span className="savings-badge">Save ₹{(product.price - discountedPrice).toFixed(0)}</span>
+                        </div>
+                    ) : (
+                        <p className="detail-price">₹{product.price?.toFixed(0)}</p>
+                    )}
+
                     <p className="description">{product.description}</p>
 
                     {product.stock > 0 && (

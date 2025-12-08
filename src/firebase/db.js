@@ -49,6 +49,16 @@ export const updateUserProfile = async (uid, data) => {
     await updateDoc(userRef, data);
 };
 
+export const banUser = async (uid) => {
+    const userRef = doc(db, "users", uid);
+    await updateDoc(userRef, { isBanned: true, bannedAt: serverTimestamp() });
+};
+
+export const unbanUser = async (uid) => {
+    const userRef = doc(db, "users", uid);
+    await updateDoc(userRef, { isBanned: false, bannedAt: null });
+};
+
 // --- Products ---
 
 export const createProduct = async (product) => {
@@ -85,22 +95,94 @@ export const deleteProduct = async (id) => {
     await deleteDoc(productRef);
 };
 
+// --- Product Offers/Deals (Admin Scheduling) ---
+export const setProductOffer = async (productId, offerData) => {
+    const productRef = doc(db, "products", productId);
+    await updateDoc(productRef, {
+        offer: {
+            discountPercent: offerData.discountPercent,
+            offerTitle: offerData.offerTitle || null,
+            startDate: offerData.startDate,
+            endDate: offerData.endDate,
+            isFeatured: offerData.isFeatured || false,
+            createdAt: serverTimestamp()
+        }
+    });
+};
+
+export const removeProductOffer = async (productId) => {
+    const productRef = doc(db, "products", productId);
+    await updateDoc(productRef, {
+        offer: null
+    });
+};
+
+export const getActiveOffers = async () => {
+    const productsRef = collection(db, "products");
+    const snapshot = await getDocs(productsRef);
+    const now = new Date();
+
+    return snapshot.docs
+        .map(doc => ({ id: doc.id, ...doc.data() }))
+        .filter(product => {
+            if (!product.offer) return false;
+            const startDate = new Date(product.offer.startDate);
+            const endDate = new Date(product.offer.endDate);
+            return now >= startDate && now <= endDate;
+        });
+};
+
+export const getFeaturedDeals = async () => {
+    const productsRef = collection(db, "products");
+    const snapshot = await getDocs(productsRef);
+    const now = new Date();
+
+    return snapshot.docs
+        .map(doc => ({ id: doc.id, ...doc.data() }))
+        .filter(product => {
+            if (!product.offer || !product.offer.isFeatured) return false;
+            const startDate = new Date(product.offer.startDate);
+            const endDate = new Date(product.offer.endDate);
+            return now >= startDate && now <= endDate;
+        })
+        .slice(0, 6); // Limit to 6 featured deals
+};
+
 // --- Orders ---
+
+// Order statuses:
+// - pending_approval (initial - waiting for admin)
+// - approved (admin approved, ready for processing)
+// - in_progress (being prepared/packed)
+// - shipped (dispatched)
+// - delivered (completed)
+// - cancelled (admin approved cancel request)
 
 export const createOrder = async (order) => {
     const ordersRef = collection(db, "orders");
-    await addDoc(ordersRef, {
+    const docRef = await addDoc(ordersRef, {
         ...order,
-        status: "pending",
+        status: "pending_approval",
+        cancelRequested: false,
+        cancelReason: null,
+        cancelApproved: null,
+        estimatedDelivery: null,
         createdAt: serverTimestamp()
     });
+    return docRef.id;
 };
 
 export const getOrdersByUser = async (uid) => {
     const ordersRef = collection(db, "orders");
-    const q = query(ordersRef, where("userId", "==", uid), orderBy("createdAt", "desc"));
+    const q = query(ordersRef, where("userId", "==", uid));
     const querySnapshot = await getDocs(q);
-    return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const orders = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    // Sort by createdAt descending (client-side to avoid composite index requirement)
+    return orders.sort((a, b) => {
+        const dateA = a.createdAt?.toDate?.() || new Date(a.createdAt) || new Date(0);
+        const dateB = b.createdAt?.toDate?.() || new Date(b.createdAt) || new Date(0);
+        return dateB - dateA;
+    });
 };
 
 export const getAllOrders = async () => {
@@ -157,6 +239,91 @@ export const updateOrderPayment = async (orderId, paymentData) => {
         paymentMethod: paymentData.method,
         paidAt: serverTimestamp()
     });
+};
+
+// --- Order Workflow (Admin) ---
+export const approveOrder = async (orderId) => {
+    const orderRef = doc(db, "orders", orderId);
+    await updateDoc(orderRef, {
+        status: "approved",
+        approvedAt: serverTimestamp(),
+        updatedAt: serverTimestamp()
+    });
+};
+
+export const rejectOrder = async (orderId, reason) => {
+    const orderRef = doc(db, "orders", orderId);
+    await updateDoc(orderRef, {
+        status: "cancelled",
+        rejectionReason: reason,
+        rejectedAt: serverTimestamp(),
+        updatedAt: serverTimestamp()
+    });
+};
+
+export const setEstimatedDelivery = async (orderId, date) => {
+    const orderRef = doc(db, "orders", orderId);
+    await updateDoc(orderRef, {
+        estimatedDelivery: date,
+        updatedAt: serverTimestamp()
+    });
+};
+
+// --- Cancel Request (User) ---
+export const requestOrderCancellation = async (orderId, reason) => {
+    const orderRef = doc(db, "orders", orderId);
+    await updateDoc(orderRef, {
+        cancelRequested: true,
+        cancelReason: reason,
+        cancelRequestedAt: serverTimestamp(),
+        updatedAt: serverTimestamp()
+    });
+};
+
+// --- Cancel Request (Admin) ---
+export const approveCancelRequest = async (orderId) => {
+    const orderRef = doc(db, "orders", orderId);
+    await updateDoc(orderRef, {
+        status: "cancelled",
+        cancelApproved: true,
+        cancelApprovedAt: serverTimestamp(),
+        updatedAt: serverTimestamp()
+    });
+};
+
+export const rejectCancelRequest = async (orderId) => {
+    const orderRef = doc(db, "orders", orderId);
+    await updateDoc(orderRef, {
+        cancelApproved: false,
+        cancelRejectedAt: serverTimestamp(),
+        updatedAt: serverTimestamp()
+    });
+};
+
+// --- Wishlist (User Subcollection) ---
+export const getUserWishlist = async (uid) => {
+    const wishlistRef = collection(db, "users", uid, "wishlist");
+    const snapshot = await getDocs(wishlistRef);
+    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+};
+
+export const addToWishlist = async (uid, product) => {
+    const wishlistRef = doc(db, "users", uid, "wishlist", product.id);
+    await setDoc(wishlistRef, {
+        ...product,
+        addedAt: serverTimestamp()
+    });
+};
+
+export const removeFromWishlist = async (uid, productId) => {
+    const wishlistRef = doc(db, "users", uid, "wishlist", productId);
+    await deleteDoc(wishlistRef);
+};
+
+export const isInWishlist = async (uid, productId) => {
+    const wishlistRef = doc(db, "users", uid, "wishlist", productId);
+    const docSnap = await getDoc(wishlistRef);
+    return docSnap.exists();
 };
 
 // --- Database Seeding ---

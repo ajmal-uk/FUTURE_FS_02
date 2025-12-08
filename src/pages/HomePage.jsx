@@ -1,20 +1,25 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { getAllProducts } from '../firebase/db';
+import { getAllProducts, getAllUsers, getAllOrders, getFeaturedDeals } from '../firebase/db';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
+import ProductCard from '../components/ProductCard';
 import '../styles/home.css';
 
 const HomePage = () => {
     const [products, setProducts] = useState([]);
+    const [deals, setDeals] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
+    const [stats, setStats] = useState({ products: 0, customers: 0, orders: 0 });
     const navigate = useNavigate();
     const { addToCart } = useCart();
     const { currentUser } = useAuth();
 
     useEffect(() => {
         fetchProducts();
+        fetchStats();
+        fetchDeals();
     }, []);
 
     const fetchProducts = async () => {
@@ -28,6 +33,32 @@ const HomePage = () => {
         }
     };
 
+    const fetchStats = async () => {
+        try {
+            const [productsData, usersData, ordersData] = await Promise.all([
+                getAllProducts(),
+                getAllUsers(),
+                getAllOrders()
+            ]);
+            setStats({
+                products: productsData.length,
+                customers: usersData.filter(u => u.role !== 'admin').length,
+                orders: ordersData.filter(o => o.status === 'delivered').length
+            });
+        } catch (err) {
+            console.error("Error fetching stats", err);
+        }
+    };
+
+    const fetchDeals = async () => {
+        try {
+            const dealsData = await getFeaturedDeals();
+            setDeals(dealsData);
+        } catch (err) {
+            console.error("Error fetching deals", err);
+        }
+    };
+
     const handleSearch = (e) => {
         e.preventDefault();
         if (searchTerm.trim()) {
@@ -36,7 +67,7 @@ const HomePage = () => {
     };
 
     const categories = [...new Set(products.map(p => p.category).filter(Boolean))];
-    const featuredProducts = products.slice(0, 4);
+    const featuredProducts = products.slice(0, 8);
 
     const handleAddToCart = (product) => {
         if (!currentUser) {
@@ -69,22 +100,63 @@ const HomePage = () => {
                         </div>
                     </form>
 
-                    <div className="hero-stats">
-                        <div className="stat">
-                            <span className="stat-value">500+</span>
-                            <span className="stat-label">Products</span>
-                        </div>
-                        <div className="stat">
-                            <span className="stat-value">10K+</span>
-                            <span className="stat-label">Customers</span>
-                        </div>
-                        <div className="stat">
-                            <span className="stat-value">4.9</span>
-                            <span className="stat-label">Rating</span>
-                        </div>
+                    <div className="hero-cta">
+                        <Link to="/products" className="btn-primary btn-large">
+                            Browse Products
+                        </Link>
+                        <span className="hero-features">
+                            ✓ Free Shipping over ₹500 &nbsp;•&nbsp; ✓ 24/7 Support &nbsp;•&nbsp; ✓ Easy Returns
+                        </span>
                     </div>
                 </div>
             </section>
+
+            {/* Today's Deals Section */}
+            {deals.length > 0 && (
+                <section className="deals-section">
+                    <div className="section-header">
+                        <div className="deals-header">
+                            <span className="deals-icon">🔥</span>
+                            <h2>Today's Deals</h2>
+                            <span className="deals-badge">Limited Time</span>
+                        </div>
+                        <Link to="/products" className="view-all">View All →</Link>
+                    </div>
+                    <div className="deals-grid">
+                        {deals.map((deal, index) => {
+                            const discountedPrice = deal.price - (deal.price * deal.offer.discountPercent / 100);
+                            return (
+                                <Link
+                                    key={deal.id}
+                                    to={`/product/${deal.id}`}
+                                    className="deal-card"
+                                    style={{ animationDelay: `${index * 0.1}s` }}
+                                >
+                                    <div className="deal-badge">
+                                        {deal.offer.discountPercent}% OFF
+                                    </div>
+                                    <div className="deal-image">
+                                        <img
+                                            src={deal.imageUrl || 'https://placehold.co/200x200?text=Product'}
+                                            alt={deal.name}
+                                        />
+                                    </div>
+                                    <div className="deal-info">
+                                        <h3 className="deal-name">{deal.name}</h3>
+                                        {deal.offer.offerTitle && (
+                                            <span className="deal-offer-title">{deal.offer.offerTitle}</span>
+                                        )}
+                                        <div className="deal-pricing">
+                                            <span className="deal-price">₹{discountedPrice.toFixed(0)}</span>
+                                            <span className="deal-original">₹{deal.price}</span>
+                                        </div>
+                                    </div>
+                                </Link>
+                            );
+                        })}
+                    </div>
+                </section>
+            )}
 
             {/* Categories Section */}
             <section className="categories-section">
@@ -135,46 +207,11 @@ const HomePage = () => {
                 ) : (
                     <div className="featured-grid">
                         {featuredProducts.map((product, index) => (
-                            <div
+                            <ProductCard
                                 key={product.id}
-                                className="product-card"
+                                product={product}
                                 style={{ animationDelay: `${index * 0.1}s` }}
-                            >
-                                <Link to={`/product/${product.id}`} className="product-image">
-                                    <img
-                                        src={product.imageUrl || 'https://placehold.co/300x300?text=Product'}
-                                        alt={product.name}
-                                    />
-                                    {product.stock <= 5 && product.stock > 0 && (
-                                        <span className="stock-badge low">Only {product.stock} left</span>
-                                    )}
-                                    {product.stock === 0 && (
-                                        <span className="stock-badge out">Out of Stock</span>
-                                    )}
-                                </Link>
-                                <div className="product-info">
-                                    <span className="product-category">{product.category}</span>
-                                    <Link to={`/product/${product.id}`}>
-                                        <h3 className="product-name">{product.name}</h3>
-                                    </Link>
-                                    <p className="product-desc">{product.description?.substring(0, 60)}...</p>
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                        <span className="featured-price">₹{product.price}</span>
-                                        <div className="product-actions">
-                                            <button
-                                                onClick={() => handleAddToCart(product)}
-                                                className="btn-add-cart"
-                                                disabled={product.stock === 0}
-                                            >
-                                                🛒
-                                            </button>
-                                            <Link to={`/product/${product.id}`} className="btn-buy-now">
-                                                Buy Now
-                                            </Link>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            />
                         ))}
                     </div>
                 )}

@@ -226,6 +226,12 @@
     border-radius: var(--radius-md);
     font-size: 1rem;
     transition: all var(--transition-fast);
+    background-color: white;
+    color: #1f2937;
+}
+
+.form-group input::placeholder {
+    color: #9ca3af;
 }
 
 .form-group input:focus {

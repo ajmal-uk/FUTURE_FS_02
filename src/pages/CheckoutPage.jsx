@@ -106,7 +106,8 @@ const CheckoutPage = () => {
                     name: item.name,
                     price: item.price,
                     quantity: item.quantity || 1,
-                    subtotal: item.price * (item.quantity || 1)
+                    subtotal: item.price * (item.quantity || 1),
+                    imageUrl: item.imageUrl || null
                 })),
                 totalAmount: finalTotal,
                 shippingAddress: selectedAddr,

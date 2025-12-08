@@ -91,11 +91,12 @@
     outline: none;
     font-size: 1rem;
     padding: 0.75rem 0;
-    color: var(--text-primary);
+    color: #1f2937;
+    background: transparent;
 }
 
 .search-wrapper input::placeholder {
-    color: var(--text-muted);
+    color: #9ca3af;
 }
 
 .search-btn {
@@ -113,28 +114,27 @@
     transform: scale(1.05);
 }
 
-/* Hero Stats */
-.hero-stats {
+/* Hero CTA Section */
+.hero-cta {
     display: flex;
-    justify-content: center;
-    gap: 3rem;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
     margin-top: 2rem;
 }
 
-.stat {
-    text-align: center;
+.hero-cta .btn-large {
+    padding: 1rem 2.5rem;
+    font-size: 1.1rem;
+    box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
 }
 
-.stat-value {
-    display: block;
-    font-size: 2rem;
-    font-weight: 700;
+.hero-features {
+    font-size: 0.9rem;
+    opacity: 0.9;
+    font-weight: 500;
 }
 
-.stat-label {
-    font-size: 0.875rem;
-    opacity: 0.8;
-}
 
 /* Section Header */
 .section-header {
@@ -206,6 +206,136 @@
     color: var(--text-secondary);
 }
 
+/* Today's Deals Section */
+.deals-section {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 3rem 2rem;
+    background: linear-gradient(135deg, #fef3c7 0%, #fce7f3 50%, #ddd6fe 100%);
+    border-radius: var(--radius-xl);
+    margin-bottom: 2rem;
+}
+
+.deals-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.deals-icon {
+    font-size: 1.75rem;
+}
+
+.deals-header h2 {
+    margin: 0;
+    color: var(--text-primary);
+}
+
+.deals-badge {
+    padding: 0.25rem 0.75rem;
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border-radius: var(--radius-full);
+    animation: pulse 2s infinite;
+}
+
+.deals-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 1.25rem;
+    margin-top: 1.5rem;
+}
+
+.deal-card {
+    position: relative;
+    background: white;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+    transition: all var(--transition-normal);
+    animation: slideUp 0.5s ease both;
+    text-decoration: none;
+}
+
+.deal-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-xl);
+}
+
+.deal-badge {
+    position: absolute;
+    top: 0.75rem;
+    left: 0.75rem;
+    padding: 0.375rem 0.75rem;
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 700;
+    border-radius: var(--radius-full);
+    z-index: 5;
+}
+
+.deal-image {
+    aspect-ratio: 1;
+    overflow: hidden;
+    background: var(--bg-tertiary);
+}
+
+.deal-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--transition-normal);
+}
+
+.deal-card:hover .deal-image img {
+    transform: scale(1.08);
+}
+
+.deal-info {
+    padding: 1rem;
+}
+
+.deal-name {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0 0 0.25rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    line-clamp: 2;
+    overflow: hidden;
+}
+
+.deal-offer-title {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--success-color);
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.deal-pricing {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.deal-price {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #ef4444;
+}
+
+.deal-original {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    text-decoration: line-through;
+}
+
 /* Featured Section */
 .featured-section {
     max-width: 1280px;
@@ -225,8 +355,8 @@
 
 .featured-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 2rem;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 1.25rem;
 }
 
 /* Product Card */
@@ -247,7 +377,7 @@
 .product-image {
     position: relative;
     display: block;
-    aspect-ratio: 1;
+    aspect-ratio: 1.1;
     overflow: hidden;
     background: var(--bg-tertiary);
 }
@@ -284,7 +414,7 @@
 }
 
 .product-info {
-    padding: 1.25rem;
+    padding: 1rem;
 }
 
 .product-category {
@@ -300,11 +430,19 @@
 }
 
 .product-name {
-    font-size: 1.1rem;
+    font-size: 0.95rem;
     font-weight: 600;
     color: var(--text-primary);
     margin-bottom: 0.25rem;
     transition: color var(--transition-fast);
+    display: -webkit-box;
+    display: box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    box-orient: vertical;
+
+    overflow: hidden;
 }
 
 .product-name:hover {
@@ -324,7 +462,7 @@
 }
 
 .product-price {
-    font-size: 1.5rem;
+    font-size: 1.1rem;
     font-weight: 700;
     background: var(--primary-gradient);
     -webkit-background-clip: text;
@@ -333,7 +471,7 @@
 }
 
 .featured-price {
-    font-size: 1.5rem;
+    font-size: 1.1rem;
     font-weight: 700;
     background: var(--primary-gradient);
     -webkit-background-clip: text;
@@ -428,8 +566,35 @@
 
 /* Responsive */
 @media (max-width: 768px) {
+    .hero-section {
+        min-height: 500px;
+        padding: 3rem 1rem;
+    }
+
     .hero-content h1 {
-        font-size: 2.25rem;
+        font-size: 2rem;
+    }
+
+    .hero-content>p {
+        font-size: 1rem;
+    }
+
+    .hero-search {
+        margin-bottom: 1.5rem;
+    }
+
+    .search-wrapper {
+        flex-direction: column;
+        padding: 0.5rem;
+        gap: 0.5rem;
+    }
+
+    .search-wrapper input {
+        width: 100%;
+    }
+
+    .search-btn {
+        width: 100%;
     }
 
     .hero-stats {
@@ -442,16 +607,81 @@
 
     .categories-section,
     .featured-section {
-        padding: 3rem 1rem;
+        padding: 2rem 1rem;
     }
 
     .section-header {
         flex-direction: column;
-        gap: 1rem;
+        gap: 0.75rem;
         text-align: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .section-header h2 {
+        font-size: 1.5rem;
+    }
+
+    /* Featured Grid - 2 columns on mobile */
+    .featured-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+    }
+
+    /* Deals Grid - 2 columns */
+    .deals-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+    }
+
+    .deals-section {
+        padding: 2rem 1rem;
+        margin: 0 0.5rem 1.5rem;
+        border-radius: 16px;
+    }
+
+    .categories-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.75rem;
+    }
+
+    .category-card {
+        padding: 1rem 0.5rem;
+    }
+
+    .category-icon {
+        font-size: 1.75rem;
+    }
+
+    .category-name {
+        font-size: 0.75rem;
+    }
+
+    .cta-section {
+        padding: 3rem 1rem;
     }
 
     .cta-content h2 {
+        font-size: 1.5rem;
+    }
+
+    .cta-content p {
+        font-size: 1rem;
+    }
+}
+
+/* Small Mobile */
+@media (max-width: 400px) {
+    .hero-content h1 {
         font-size: 1.75rem;
+    }
+
+    .featured-grid,
+    .deals-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.5rem;
+    }
+
+    .categories-grid {
+        grid-template-columns: repeat(2, 1fr);
     }
 }

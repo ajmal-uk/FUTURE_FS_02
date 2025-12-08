@@ -48,7 +48,9 @@ export const Header = () => {
                                     </span>
                                 </button>
                                 <div className="dropdown-content">
-                                    <Link to="/my-orders">📦 My Orders</Link>
+                                    <Link to="/profile">👤 My Profile</Link>
+                                    <Link to="/profile" onClick={() => setTimeout(() => document.querySelector('[data-tab="orders"]')?.click(), 100)}>📦 My Orders</Link>
+                                    <Link to="/profile" onClick={() => setTimeout(() => document.querySelector('[data-tab="wishlist"]')?.click(), 100)}>❤️ Wishlist</Link>
                                     <Link to="/addresses">📍 Addresses</Link>
                                     <button onClick={handleLogout}>🚪 Logout</button>
                                 </div>

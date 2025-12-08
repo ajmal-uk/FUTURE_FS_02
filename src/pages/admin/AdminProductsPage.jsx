@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getAllProducts, createProduct, updateProduct, deleteProduct } from '../../firebase/db';
+import { getAllProducts, createProduct, updateProduct, deleteProduct, setProductOffer, removeProductOffer } from '../../firebase/db';
 
 const CATEGORIES = ['Electronics', 'Fashion', 'Home', 'Sports', 'Food', 'Other'];
 
@@ -15,6 +15,14 @@ const AdminProductsPage = () => {
         category: 'Electronics',
         imageUrl: '',
         stock: 10
+    });
+    const [showOfferModal, setShowOfferModal] = useState(null);
+    const [offerData, setOfferData] = useState({
+        discountPercent: 10,
+        offerTitle: '',
+        startDate: '',
+        endDate: '',
+        isFeatured: false
     });
 
     useEffect(() => {
@@ -90,6 +98,30 @@ const AdminProductsPage = () => {
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handleOfferSubmit = async (productId) => {
+        try {
+            await setProductOffer(productId, offerData);
+            setShowOfferModal(null);
+            setOfferData({ discountPercent: 10, offerTitle: '', startDate: '', endDate: '', isFeatured: false });
+            fetchProducts();
+            alert('Offer scheduled successfully!');
+        } catch (err) {
+            console.error(err);
+            alert('Failed to set offer');
+        }
+    };
+
+    const handleRemoveOffer = async (productId) => {
+        if (window.confirm('Remove this offer?')) {
+            try {
+                await removeProductOffer(productId);
+                fetchProducts();
+            } catch (err) {
+                console.error(err);
+            }
+        }
     };
 
     if (loading) {
@@ -203,6 +235,7 @@ const AdminProductsPage = () => {
                             <th>Product</th>
                             <th>Category</th>
                             <th>Price</th>
+                            <th>Offer</th>
                             <th>Stock</th>
                             <th>Actions</th>
                         </tr>
@@ -210,7 +243,7 @@ const AdminProductsPage = () => {
                     <tbody>
                         {products.length === 0 ? (
                             <tr>
-                                <td colSpan="6" style={{ textAlign: 'center', padding: '2rem' }}>
+                                <td colSpan="7" style={{ textAlign: 'center', padding: '2rem' }}>
                                     No products yet. Add your first product!
                                 </td>
                             </tr>
@@ -245,6 +278,32 @@ const AdminProductsPage = () => {
                                         )}
                                     </td>
                                     <td>
+                                        {product.offer ? (
+                                            <div style={{ fontSize: '0.8rem' }}>
+                                                <span style={{ background: '#ef4444', color: 'white', padding: '2px 6px', borderRadius: '4px', fontWeight: 'bold' }}>
+                                                    {product.offer.discountPercent}% OFF
+                                                </span>
+                                                {product.offer.isFeatured && (
+                                                    <span style={{ marginLeft: '4px', color: '#f59e0b' }}>⭐</span>
+                                                )}
+                                                <br />
+                                                <button
+                                                    onClick={() => handleRemoveOffer(product.id)}
+                                                    style={{ fontSize: '0.7rem', color: '#ef4444', background: 'none', border: 'none', cursor: 'pointer', marginTop: '4px' }}
+                                                >
+                                                    Remove
+                                                </button>
+                                            </div>
+                                        ) : (
+                                            <button
+                                                onClick={() => setShowOfferModal(product)}
+                                                style={{ fontSize: '0.75rem', padding: '4px 8px', background: 'var(--primary-gradient)', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+                                            >
+                                                + Add Offer
+                                            </button>
+                                        )}
+                                    </td>
+                                    <td>
                                         <div className="table-actions">
                                             <button
                                                 onClick={() => handleEdit(product)}
@@ -266,8 +325,86 @@ const AdminProductsPage = () => {
                     </tbody>
                 </table>
             </div>
+
+            {/* Offer Modal */}
+            {showOfferModal && (
+                <div className="modal-overlay" onClick={() => setShowOfferModal(null)}>
+                    <div className="modal" onClick={e => e.stopPropagation()}>
+                        <h3>🏷️ Schedule Offer for {showOfferModal.name}</h3>
+                        <p style={{ color: 'var(--text-secondary)', marginBottom: '1rem' }}>
+                            Set discount percentage and schedule dates for this product.
+                        </p>
+                        <div style={{ marginBottom: '1rem' }}>
+                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>Discount %</label>
+                            <input
+                                type="number"
+                                min="1"
+                                max="90"
+                                value={offerData.discountPercent}
+                                onChange={(e) => setOfferData({ ...offerData, discountPercent: Number(e.target.value) })}
+                                style={{ width: '100%', padding: '0.75rem', border: '2px solid var(--border-color)', borderRadius: '8px' }}
+                            />
+                        </div>
+                        <div style={{ marginBottom: '1rem' }}>
+                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>Offer Title (optional)</label>
+                            <input
+                                type="text"
+                                placeholder="e.g., Summer Sale, Festival Offer"
+                                value={offerData.offerTitle}
+                                onChange={(e) => setOfferData({ ...offerData, offerTitle: e.target.value })}
+                                style={{ width: '100%', padding: '0.75rem', border: '2px solid var(--border-color)', borderRadius: '8px' }}
+                            />
+                        </div>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+                            <div>
+                                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>Start Date</label>
+                                <input
+                                    type="date"
+                                    value={offerData.startDate}
+                                    onChange={(e) => setOfferData({ ...offerData, startDate: e.target.value })}
+                                    style={{ width: '100%', padding: '0.75rem', border: '2px solid var(--border-color)', borderRadius: '8px' }}
+                                    required
+                                />
+                            </div>
+                            <div>
+                                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>End Date</label>
+                                <input
+                                    type="date"
+                                    value={offerData.endDate}
+                                    onChange={(e) => setOfferData({ ...offerData, endDate: e.target.value })}
+                                    style={{ width: '100%', padding: '0.75rem', border: '2px solid var(--border-color)', borderRadius: '8px' }}
+                                    required
+                                />
+                            </div>
+                        </div>
+                        <div style={{ marginBottom: '1.5rem' }}>
+                            <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+                                <input
+                                    type="checkbox"
+                                    checked={offerData.isFeatured}
+                                    onChange={(e) => setOfferData({ ...offerData, isFeatured: e.target.checked })}
+                                />
+                                <span>⭐ Feature in Today's Deals (Homepage)</span>
+                            </label>
+                        </div>
+                        <div className="modal-actions">
+                            <button className="btn-secondary" onClick={() => setShowOfferModal(null)}>
+                                Cancel
+                            </button>
+                            <button
+                                className="btn-primary"
+                                onClick={() => handleOfferSubmit(showOfferModal.id)}
+                                disabled={!offerData.startDate || !offerData.endDate}
+                            >
+                                Schedule Offer
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
 
 export default AdminProductsPage;
+

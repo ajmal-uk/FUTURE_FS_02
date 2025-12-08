@@ -76,7 +76,9 @@ const AdminOverview = () => {
     const [stats, setStats] = useState({
         products: 0,
         orders: 0,
-        users: 0,
+        customers: 0,
+        admins: 0,
+        banned: 0,
         revenue: 0
     });
     const [recentOrders, setRecentOrders] = useState([]);
@@ -95,11 +97,16 @@ const AdminOverview = () => {
             ]);
 
             const revenue = orders.reduce((sum, order) => sum + (order.totalAmount || 0), 0);
+            const admins = users.filter(u => u.role === 'admin' && !u.isBanned);
+            const customers = users.filter(u => u.role !== 'admin' && !u.isBanned);
+            const banned = users.filter(u => u.isBanned);
 
             setStats({
                 products: products.length,
                 orders: orders.length,
-                users: users.length,
+                customers: customers.length,
+                admins: admins.length,
+                banned: banned.length,
                 revenue
             });
 
@@ -145,8 +152,22 @@ const AdminOverview = () => {
                 <div className="stat-card">
                     <div className="stat-icon users">👥</div>
                     <div className="stat-info">
-                        <span className="stat-value">{stats.users}</span>
-                        <span className="stat-label">Users</span>
+                        <span className="stat-value">{stats.customers}</span>
+                        <span className="stat-label">Customers</span>
+                    </div>
+                </div>
+                <div className="stat-card">
+                    <div className="stat-icon admins">🛡️</div>
+                    <div className="stat-info">
+                        <span className="stat-value">{stats.admins}</span>
+                        <span className="stat-label">Admins</span>
+                    </div>
+                </div>
+                <div className="stat-card">
+                    <div className="stat-icon banned">🚫</div>
+                    <div className="stat-info">
+                        <span className="stat-value">{stats.banned}</span>
+                        <span className="stat-label">Banned</span>
                     </div>
                 </div>
                 <div className="stat-card">
