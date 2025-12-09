@@ -152,8 +152,8 @@ This project is licensed under the **MIT License**. See the [LICENSE](LICENSE) f
 
 **MUHAMMED AJMAL U K**  
 - 🔗 [GitHub Profile](https://github.com/ajmal-uk)  
-- 📫 Email: [Your Email] (add your contact if desired)  
-- 💼 LinkedIn: [Your LinkedIn] (link to your profile)
+- 📫 Email: [Email] (ajmaluk.me@gmail.com)  
+- 💼 LinkedIn: [LinkedIn] (https://linkedin.com/in/ajmal-uk)
 
 This project was developed as part of the Future Interns Full Stack Web Development Fellowship (November 2025).
 
