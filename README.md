@@ -4,8 +4,6 @@
 
 🔗 **Live Demo**: [https://ajmal-uk.github.io/FUTURE_FS_02](https://ajmal-uk.github.io/FUTURE_FS_02)
 
-https://user-images.githubusercontent.com/91336447/284951277-89c0c0ff-8a3d-4e6f-9e0b-3f8e0f9d8e6f.mp4
-
 ## ✨ Key Features
 
 ### 🛍️ Shopping Experience
