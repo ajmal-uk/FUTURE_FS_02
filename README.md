@@ -62,12 +62,6 @@ src/
 └── assets/         # Images, icons, etc.
 ```
 
-## 🔐 Demo Credentials (Admin Access)
-
-| Role  | Email              | Password |
-|-------|--------------------|----------|
-| Admin | `admin@gmail.com`  | `123456` |
-
 > Regular users can register directly on the site.
 
 ## 🚀 Quick Start
